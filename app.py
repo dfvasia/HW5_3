@@ -11,13 +11,26 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 
 def build_query(file: str, query: str):
     query_items = query.split("|")
-    res = map(lambda x: x.strit(), file)
+    res = map(lambda x: x.strip(), file)
     for item in query_items:
         s_item = item.split(":")
         cmd = s_item[0]
-        if cmd == "filter"
-    print(query_items)
-    print(res)
+        if cmd == "filter":
+            arg = s_item[1]
+            res = filter(lambda t, txt=arg: txt in t, res)
+        if cmd == "map":
+            arg = int(s_item[1])
+            res = map(lambda t, idx=arg: t.split(" ")[idx], res)
+        if cmd == "unique":
+            res = set(res)
+        if cmd == "sort":
+            arg = s_item[1]
+            reverse = bool(arg == "desc")
+            res = sorted(res, reverse=reverse)
+        if cmd == "limit":
+            arg = int(s_item[1])
+            res = list(res)[:arg]
+        return res
 
 
 @app.route("/perform_query")
@@ -35,8 +48,7 @@ def perform_query():
 
     with open(file_path) as f:
         res = build_query(f, query)
-        data = ''
-
+        data = '\n'.join(res)
 
     # с помощью функционального программирования (функций filter, map), итераторов/генераторов сконструировать запрос
     # вернуть пользователю сформированный результат
