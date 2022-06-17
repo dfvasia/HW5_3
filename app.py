@@ -15,7 +15,7 @@ def build_query(file: str, query: str):
     for item in query_items:
         s_item = item.split(":")
         cmd = s_item[0]
-        if cmd == "filter":
+        if cmd == "filter":  # с помощью функционального программирования (функций filter, map), итераторов/генераторов сконструировать запрос
             arg = s_item[1]
             res = filter(lambda t, txt=arg: txt in t, res)
         if cmd == "map":
@@ -49,7 +49,7 @@ def perform_query():
     with open(file_path) as f:
         res = build_query(f, query)
         data = '\n'.join(res)
+        print(data)
 
-    # с помощью функционального программирования (функций filter, map), итераторов/генераторов сконструировать запрос
     # вернуть пользователю сформированный результат
     return app.response_class(data, content_type="text/plain")
