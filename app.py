@@ -1,6 +1,7 @@
 import os
+from typing import Union
 
-from flask import Flask, request
+from flask import Flask, request, Response
 from werkzeug.exceptions import BadRequest
 
 app = Flask(__name__)
@@ -34,7 +35,7 @@ def build_query(file: str, query: str):
 
 
 @app.route("/perform_query")
-def perform_query():
+def perform_query() -> Response:
     try:  # получить параметры query и file_name из request.args, при ошибке вернуть ошибку 400
         query = request.args["query"]
         file_name = request.args["file_name"]
@@ -43,8 +44,9 @@ def perform_query():
         raise BadRequest
 
     file_path = os.path.join(DATA_DIR, file_name)
-    if not os.path.exists(file_path):  # проверить, что файла file_name существует в папке DATA_DIR, при ошибке вернуть ошибку 400
-        return BadRequest(f"{file_name} was not found")
+    if not os.path.exists(file_path):  # проверить, что файла file_name существует в папке DATA_DIR, при ошибке
+        # вернуть ошибку 400
+        raise BadRequest(f"{file_name} was not found")
 
     with open(file_path) as f:
         res = build_query(f, query)
